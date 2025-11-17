@@ -1,6 +1,8 @@
 # 👁️ BlinkCheck — 1-Minute Daily Eye Comfort Check + Mini-Games  
 **Live site:** https://pkilaru-labs.github.io/blinkcheck/  
 
+![Visitors](https://visitor-badge.glitch.me/badge?page_id=pkilaru-labs.blinkcheck)
+
 BlinkCheck is a simple, fast, web-based tool that helps users check their daily **eye comfort** and understand whether their screen habits may be contributing to digital eye strain — all in under **one minute**.
 
 It is **non-medical**, requires **no login**, stores **no data**, and runs entirely in the browser.
