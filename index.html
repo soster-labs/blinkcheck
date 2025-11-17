@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BlinkCheck — 1-Minute Eye Comfort Check + Mini-Games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #fde68a;        /* pastel yellow */
+      --bg-grid: #facc15;        /* deeper pixel lines */
+      --card-bg: #fefce8;        /* light cream */
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.12);
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border-subtle: #e5e7eb;
+      --green: #16a34a;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --red: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-size: 18px; /* bigger base font */
+      background-color: var(--bg-main);
+      background-image:
+        linear-gradient(var(--bg-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+      background-size: 18px 18px, 18px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 880px;
+      background-color: var(--card-bg);
+      border-radius: 18px;
+      padding: 24px 22px 26px;
+      border: 2px solid #fbbf24;
+      box-shadow:
+        0 14px 40px rgba(248, 181, 0, 0.4),
+        0 0 0 3px rgba(254, 249, 195, 0.9);
+    }
+
+    @media (min-width: 640px) {
+      .app {
+        padding: 26px 28px 30px;
+      }
+    }
+
+    .header {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #fef3c7, #f59e0b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 0 2px #facc15,
+        0 10px 20px rgba(251, 191, 36, 0.8);
+      image-rendering: pixelated;
+    }
+
+    .logo-eye {
+      width: 30px;
+      height: 19px;
+      border-radius: 16px;
+      border: 3px solid #111827;
+      background: #fef3c7;
+      position: relative;
+    }
+    .logo-eye::before {
+      content: "";
+      position: absolute;
+      inset: 3px 7px;
+      border-radius: 999px;
+      background: #fde68a;
+    }
+    .logo-eye::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background-color: #111827;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .headline-main {
+      font-size: 1.8rem;
+      font-weight: 750;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      font-size: 0.85rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px dashed #f59e0b;
+      color: #92400e;
+      background-color: #fffbeb;
+    }
+
+    .headline-sub {
+      font-size: 1.02rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      max-width: 520px;
+    }
+
+    .card {
+      margin-top: 12px;
+      padding: 16px 14px 18px;
+      border-radius: 14px;
+      background-color: #fffbeb;
+      border: 1px solid var(--border-subtle);
+    }
+
+    @media (min-width: 640px) {
+      .card {
+        padding: 18px 18px 20px;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        background-color 0.12s ease, border-color 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #f97316, #ef4444);
+      color: #fffbeb;
+      box-shadow: 0 8px 18px rgba(248, 113, 113, 0.8);
+    }
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(248, 113, 113, 1);
+    }
+
+    .secondary-btn {
+      background-color: #fef9c3;
+      border: 1px solid #facc15;
+      color: #854d0e;
+    }
+
+    .secondary-btn:hover {
+      background-color: #fef3c7;
+    }
+
+    .start-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .start-note {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .start-note strong {
+      color: #92400e;
+    }
+
+    .progress-bar-container {
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background-color: #fef3c7;
+      border: 1px solid #fcd34d;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #f97316);
+      transition: width 0.2s ease;
+    }
+
+    .question-title {
+      font-size: 1.25rem;
+      font-weight: 650;
+      margin-bottom: 4px;
+    }
+
+    .question-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .input-block {
+      margin-bottom: 6px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #f97316;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .radio-group {
+      display: grid;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #fed7aa;
+      background-color: #fffbeb;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .radio-option input {
+      accent-color: #f97316;
+    }
+
+    .radio-text-main {
+      color: #111827;
+    }
+
+    .radio-text-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .error-msg {
+      font-size: 0.9rem;
+      color: #b91c1c;
+      margin-top: 4px;
+    }
+
+    .result-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+    }
+
+    .result-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background-color: currentColor;
+    }
+
+    .result-tag.green {
+      background-color: #dcfce7;
+      color: var(--green);
+      border: 1px solid #22c55e;
+    }
+    .result-tag.yellow {
+      background-color: #fef9c3;
+      color: var(--yellow);
+      border: 1px solid #eab308;
+    }
+    .result-tag.orange {
+      background-color: #ffedd5;
+      color: var(--orange);
+      border: 1px solid #f97316;
+    }
+    .result-tag.red {
+      background-color: #fee2e2;
+      color: var(--red);
+      border: 1px solid #ef4444;
+    }
+
+    .result-score {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .result-heading {
+      font-size: 1.2rem;
+      font-weight: 650;
+      margin-bottom: 4px;
+    }
+
+    .result-text {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .result-breakdown {
+      margin-top: 10px;
+      padding: 10px 10px;
+      border-radius: 10px;
+      background-color: #fef9c3;
+      border: 1px solid #fde68a;
+      font-size: 0.9rem;
+      color: #78350f;
+    }
+
+    .result-breakdown-title {
+      font-weight: 650;
+      margin-bottom: 4px;
+    }
+
+    .result-breakdown-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 4px 0 0;
+    }
+
+    .result-breakdown-item {
+      margin-bottom: 4px;
+    }
+
+    .result-breakdown-item span.label {
+      font-weight: 600;
+    }
+
+    .tip-list {
+      list-style: disc;
+      padding-left: 20px;
+      margin: 6px 0 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .tip-list strong {
+      color: #111827;
+    }
+
+    .disclaimer {
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background-color: #fef2f2;
+      border: 1px dashed #fecaca;
+      font-size: 0.9rem;
+      color: #7f1d1d;
+    }
+
+    .disclaimer strong {
+      color: #991b1b;
+    }
+
+    .footer {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---- Mini-Games ---- */
+
+    .mini-game-card {
+      margin-top: 10px;
+      padding: 12px 12px 14px;
+      border-radius: 14px;
+      background-color: #fffbeb;
+      border: 1px solid #fed7aa;
+    }
+
+    .mini-game-title {
+      font-size: 1rem;
+      font-weight: 650;
+      margin-bottom: 4px;
+    }
+
+    .mini-game-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    /* Contrast Spotter */
+    .contrast-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .contrast-square {
+      height: 52px;
+      border-radius: 10px;
+      background-color: #d4d4d4;
+      border: 2px solid #9ca3af;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease,
+        opacity 0.1s ease;
+    }
+
+    .contrast-square:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(148, 163, 184, 0.7);
+    }
+
+    .contrast-square.correct.revealed {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.8);
+    }
+
+    .contrast-square.wrong.revealed {
+      border-color: var(--red);
+      opacity: 0.7;
+    }
+
+    .mini-game-feedback {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .mini-game-feedback strong {
+      color: #111827;
+    }
+
+    .mini-game-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Lines Checker */
+    .lines-grid-wrapper {
+      margin-top: 4px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .lines-grid {
+      width: 180px;
+      height: 180px;
+      border-radius: 10px;
+      background-image:
+        linear-gradient(to right, #d4d4d4 2px, transparent 2px),
+        linear-gradient(to bottom, #d4d4d4 2px, transparent 2px);
+      background-size: 18px 18px, 18px 18px;
+      border: 2px solid #9ca3af;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lines-grid-center-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background-color: #111827;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .lines-info {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .lines-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .lines-option-btn {
+      border-radius: 999px;
+      border: 1px solid #fed7aa;
+      background-color: #fef3c7;
+      color: #92400e;
+      font-size: 0.9rem;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background-color 0.1s ease, border-color 0.1s ease,
+        transform 0.1s ease;
+    }
+
+    .lines-option-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .lines-option-btn.active {
+      border-color: #f97316;
+      background-color: #ffedd5;
+      color: #7c2d12;
+    }
+
+    .lines-feedback {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Color Dot Guess (Ishihara-style, non-diagnostic) */
+    .color-dot-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 14px);
+      grid-auto-rows: 14px;
+      gap: 2px;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    .color-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+    }
+
+    .color-dot-legend {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .color-dot-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .color-dot-btn {
+      border-radius: 999px;
+      border: 1px solid #fed7aa;
+      background-color: #fef3c7;
+      color: #92400e;
+      font-size: 0.9rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: background-color 0.1s ease, border-color 0.1s ease,
+        transform 0.1s ease;
+    }
+
+    .color-dot-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .color-dot-btn.active {
+      border-color: #f97316;
+      background-color: #ffedd5;
+      color: #7c2d12;
+    }
+
+    .color-dot-feedback {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-eye"></div>
+      </div>
+      <div>
+        <div class="headline-main">
+          BlinkCheck
+          <span class="badge">tiny daily eye comfort game</span>
+        </div>
+        <div class="headline-sub">
+          A cute, 1-minute, browser-only check-in on how comfy your eyes feel today.
+          No diagnosis. No login. Nothing is saved.
+        </div>
+      </div>
+    </header>
+
+    <!-- Start Screen -->
+    <section id="start-screen" class="card">
+      <p style="font-size:1rem; color:var(--text-muted); margin-top:0;">
+        Answer 6 quick questions about your eyes and screen use today.
+        You’ll get a simple traffic-light comfort score:
+        <strong>Green</strong> (comfortable),
+        <strong>Yellow</strong> (mild strain),
+        <strong>Orange</strong> (moderate strain),
+        <strong>Red</strong> (consider an eye exam if this keeps happening).
+      </p>
+      <div class="start-actions">
+        <button id="start-btn" class="primary-btn" type="button">
+          Start 1-minute check
+          <span aria-hidden="true">▶</span>
+        </button>
+        <span class="start-note">
+          <strong>Note:</strong> This is not a medical test. It’s for awareness and daily habits.
+        </span>
+      </div>
+    </section>
+
+    <!-- Question Screen -->
+    <section id="question-screen" class="card hidden">
+      <div class="progress-bar-container">
+        <div class="progress-label">
+          <span id="progress-text">Question 1</span>
+          <span id="progress-count">1 / 6</span>
+        </div>
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div id="question-body"></div>
+
+      <div id="question-error" class="error-msg hidden">
+        Please pick an answer to continue.
+      </div>
+
+      <div class="nav-row">
+        <button id="back-btn" class="secondary-btn" type="button">
+          ← Back
+        </button>
+        <button id="next-btn" class="primary-btn" type="button">
+          Next
+        </button>
+      </div>
+    </section>
+
+    <!-- Result Screen -->
+    <section id="result-screen" class="card hidden">
+      <div id="result-tag" class="result-tag green">
+        <span class="result-dot"></span>
+        <span id="result-label">Green · Comfortable</span>
+      </div>
+      <div id="result-score" class="result-score"></div>
+      <div id="result-heading" class="result-heading"></div>
+      <div id="result-text" class="result-text"></div>
+
+      <div id="result-breakdown" class="result-breakdown">
+        <!-- score card injected here -->
+      </div>
+
+      <div style="margin-top:10px;">
+        <div style="font-size:1rem; font-weight:650; margin-bottom:4px;">
+          Gentle daily tips
+        </div>
+        <ul class="tip-list">
+          <li><strong>20–20–20 rule:</strong> Every ~20 minutes, look 20 feet away for 20 seconds.</li>
+          <li><strong>Blink more:</strong> Screens make us stare. Consciously blink when your eyes feel dry.</li>
+          <li><strong>Light & screen:</strong> Avoid a dark room with a very bright screen. Reduce glare where you can.</li>
+          <li><strong>Hydrate & sit well:</strong> Water + posture make long screen days kinder to your eyes.</li>
+        </ul>
+      </div>
+
+      <div class="disclaimer">
+        <strong>Important:</strong> BlinkCheck is not a medical device and does not diagnose or treat any eye condition.
+        If you have sudden vision changes, eye pain, a dark patch, wavy lines, flashes of light, or symptoms that worry
+        you, please book a proper eye examination with an eye care professional.
+      </div>
+
+      <div class="nav-row" style="margin-top:12px;">
+        <button id="restart-btn" class="secondary-btn" type="button">
+          Run BlinkCheck again
+        </button>
+        <button id="share-btn" class="secondary-btn" type="button">
+          Copy my result text
+        </button>
+      </div>
+    </section>
+
+    <!-- Bonus mini-game toggle -->
+    <section class="card">
+      <div style="font-size:1rem; font-weight:650; margin-bottom:4px;">
+        Bonus visual mini-games (optional)
+      </div>
+      <p style="font-size:0.9rem; color:var(--text-muted); margin-top:4px; margin-bottom:10px;">
+        Tiny, non-medical mini-games inspired by contrast checks, grids and color-dot puzzles.
+        They don’t change your BlinkCheck score and are <strong>not</strong> diagnostic.
+      </p>
+      <button id="toggle-bonus-btn" class="secondary-btn" type="button">
+        Show bonus mini-games
+      </button>
+    </section>
+
+    <!-- Mini-Games Section (hidden until button click) -->
+    <div id="bonus-container" class="hidden">
+      <section class="card mini-game-card">
+        <div class="mini-game-title">Bonus mini-game · Contrast Spotter</div>
+        <div class="mini-game-sub">
+          One of the grey boxes below is a little darker. Tap the one you think is darkest.
+          This is just a fun screen contrast game, not a real vision test.
+        </div>
+        <div id="contrast-grid" class="contrast-grid"></div>
+        <div id="contrast-feedback" class="mini-game-feedback">
+          Tap a box to take a guess.
+        </div>
+        <div class="mini-game-actions">
+          <button id="contrast-reset-btn" class="secondary-btn" type="button">
+            New pattern
+          </button>
+        </div>
+      </section>
+
+      <section class="card mini-game-card">
+        <div class="mini-game-title">Bonus mini-game · Lines Checker (not a test)</div>
+        <div class="mini-game-sub">
+          This small grid is just a visual example. If you ever see bent lines, missing
+          patches, or dark spots in your real vision, please get a proper eye exam.
+          This mini-game <strong>cannot diagnose anything.</strong>
+        </div>
+
+        <div class="lines-grid-wrapper">
+          <div class="lines-grid">
+            <div class="lines-grid-center-dot"></div>
+          </div>
+        </div>
+
+        <div class="lines-info">
+          Cover one eye, look at the center dot for a few seconds, then repeat with the
+          other eye. In your everyday life (not just this grid), have you recently noticed
+          straight lines looking bent, broken, or a dark patch in your vision?
+        </div>
+
+        <div class="lines-options">
+          <button class="lines-option-btn" data-lines="no">
+            No, never
+          </button>
+          <button class="lines-option-btn" data-lines="maybe">
+            Not sure / maybe once
+          </button>
+          <button class="lines-option-btn" data-lines="yes">
+            Yes, clearly and recently
+          </button>
+        </div>
+
+        <div id="lines-feedback" class="lines-feedback">
+          Your answer here won’t change your BlinkCheck score. It’s just a reminder to
+          pay attention to your own vision.
+        </div>
+      </section>
+
+      <section class="card mini-game-card">
+        <div class="mini-game-title">Bonus mini-game · Color Dot Guess</div>
+        <div class="mini-game-sub">
+          Inspired by color-dot puzzles. A number is hidden in the dots below. Your screen,
+          brightness and lighting change how this looks — this is <strong>not</strong> a
+          color blindness test.
+        </div>
+
+        <div id="color-dot-grid" class="color-dot-grid"></div>
+
+        <div class="color-dot-legend">
+          What number do you think you see in the dots?
+        </div>
+
+        <div class="color-dot-options">
+          <button class="color-dot-btn" data-num="3">3</button>
+          <button class="color-dot-btn" data-num="5">5</button>
+          <button class="color-dot-btn" data-num="8">8</button>
+          <button class="color-dot-btn" data-num="no">I don't see a clear number</button>
+        </div>
+
+        <div id="color-dot-feedback" class="color-dot-feedback">
+          Just a fun visual game — not a diagnostic test.
+        </div>
+        <div class="mini-game-actions">
+          <button id="color-dot-reset-btn" class="secondary-btn" type="button">
+            New dot pattern
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div>BlinkCheck · educational eye comfort project (non-medical).</div>
+      <div>All answers stay in this browser tab and disappear when you close it.</div>
+    </footer>
+  </div>
+
+  <script>
+    // -------- Core BlinkCheck questions --------
+    const questions = [
+      {
+        id: "eyeComfort",
+        type: "slider",
+        title: "How comfortable do your eyes feel right now?",
+        desc: "Think about your eyes in this exact moment.",
+        min: 0,
+        max: 3,
+        step: 1,
+        labels: ["Very comfortable", "Fairly okay", "A bit strained", "Very uncomfortable"]
+      },
+      {
+        id: "screenTime",
+        type: "radio",
+        title: "Roughly how many hours of screen time have you had today?",
+        desc: "Include phone, laptop, tablet, and other digital screens.",
+        options: [
+          { value: 0, main: "< 2 hours", sub: "Very low screen load" },
+          { value: 1, main: "2 – 4 hours", sub: "Light to moderate" },
+          { value: 2, main: "4 – 8 hours", sub: "Typical study/work day" },
+          { value: 3, main: "> 8 hours", sub: "Heavy screen use" }
+        ]
+      },
+      {
+        id: "breakHabit",
+        type: "radio",
+        title: "How often do you give your eyes a short break from the screen?",
+        desc: "Short breaks = looking away, standing up, or pausing screens.",
+        options: [
+          { value: 0, main: "Every ~20 minutes", sub: "I follow 20–20–20 fairly well" },
+          { value: 1, main: "Every 30–60 minutes", sub: "I remember breaks sometimes" },
+          { value: 2, main: "A few times a day", sub: "Breaks are irregular" },
+          { value: 3, main: "Almost never", sub: "I mostly power through" }
+        ]
+      },
+      {
+        id: "dryness",
+        type: "radio",
+        title: "Have you noticed dryness, grittiness, or redness today?",
+        desc: "Even a little counts. Think about the whole day so far.",
+        options: [
+          { value: 0, main: "Not at all", sub: "Eyes feel normal" },
+          { value: 1, main: "Sometimes", sub: "Mild and occasional" },
+          { value: 2, main: "Quite often", sub: "Noticeable during the day" },
+          { value: 3, main: "Constant or strong", sub: "Very noticeable today" }
+        ]
+      },
+      {
+        id: "lightEnv",
+        type: "radio",
+        title: "What does your main screen + room lighting look like?",
+        desc: "Think about where you spent most of your screen time today.",
+        options: [
+          {
+            value: 0,
+            main: "Soft, even lighting",
+            sub: "No harsh glare, screen brightness feels balanced"
+          },
+          {
+            value: 1,
+            main: "Mostly okay",
+            sub: "Sometimes a bit too bright or too dim"
+          },
+          {
+            value: 2,
+            main: "Glare or strong contrast",
+            sub: "Bright reflections or bright window behind screen"
+          },
+          {
+            value: 3,
+            main: "Dark room + bright screen",
+            sub: "Screen is the main light source"
+          }
+        ]
+      },
+      {
+        id: "distortion",
+        type: "radio",
+        title: "Have you noticed wavy lines, dark patches, or distortion in vision?",
+        desc: "For example, straight lines looking bent or a patch of missing vision.",
+        options: [
+          { value: 0, main: "No, never", sub: "Lines look straight, no patch" },
+          { value: 2, main: "Maybe, not sure", sub: "Something felt off at times" },
+          { value: 3, main: "Yes, clearly today", sub: "New or persistent distortion" }
+        ]
+      }
+    ];
+
+    const answers = {};
+    let currentIndex = 0;
+
+    // DOM elements
+    const startScreen = document.getElementById("start-screen");
+    const questionScreen = document.getElementById("question-screen");
+    const resultScreen = document.getElementById("result-screen");
+
+    const startBtn = document.getElementById("start-btn");
+    const backBtn = document.getElementById("back-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const shareBtn = document.getElementById("share-btn");
+
+    const progressText = document.getElementById("progress-text");
+    const progressCount = document.getElementById("progress-count");
+    const progressFill = document.getElementById("progress-fill");
+    const questionBody = document.getElementById("question-body");
+    const questionError = document.getElementById("question-error");
+
+    const resultTag = document.getElementById("result-tag");
+    const resultLabel = document.getElementById("result-label");
+    const resultScore = document.getElementById("result-score");
+    const resultHeading = document.getElementById("result-heading");
+    const resultText = document.getElementById("result-text");
+    const resultBreakdownEl = document.getElementById("result-breakdown");
+
+    const toggleBonusBtn = document.getElementById("toggle-bonus-btn");
+    const bonusContainer = document.getElementById("bonus-container");
+    let bonusVisible = false;
+
+    function showStartScreen() {
+      startScreen && startScreen.classList.remove("hidden");
+      questionScreen && questionScreen.classList.add("hidden");
+      resultScreen && resultScreen.classList.add("hidden");
+    }
+
+    function showQuestionScreen() {
+      startScreen && startScreen.classList.add("hidden");
+      resultScreen && resultScreen.classList.add("hidden");
+      questionScreen && questionScreen.classList.remove("hidden");
+      renderQuestion();
+    }
+
+    function showResultScreen() {
+      startScreen && startScreen.classList.add("hidden");
+      questionScreen && questionScreen.classList.add("hidden");
+      resultScreen && resultScreen.classList.remove("hidden");
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      if (!q || !questionBody) return;
+
+      questionError && questionError.classList.add("hidden");
+
+      if (progressText) {
+        progressText.textContent = "Question " + (currentIndex + 1);
+      }
+      if (progressCount) {
+        progressCount.textContent = (currentIndex + 1) + " / " + questions.length;
+      }
+      if (progressFill) {
+        const progressPercent = ((currentIndex) / (questions.length - 1)) * 100;
+        progressFill.style.width = progressPercent + "%";
+      }
+
+      let html = `
+        <div class="question-title">${q.title}</div>
+        <div class="question-desc">${q.desc}</div>
+      `;
+
+      if (q.type === "slider") {
+        const saved = answers[q.id] ?? 1;
+        html += `
+          <div class="input-block">
+            <div class="slider-row">
+              <input
+                type="range"
+                id="${q.id}-input"
+                min="${q.min}"
+                max="${q.max}"
+                step="${q.step}"
+                value="${saved}"
+              />
+            </div>
+            <div class="slider-labels">
+              ${q.labels.map((label) => `<span>${label}</span>`).join("")}
+            </div>
+          </div>
+        `;
+      } else if (q.type === "radio") {
+        html += `<div class="input-block"><div class="radio-group">`;
+        const saved = answers[q.id];
+        q.options.forEach((opt, idx) => {
+          const id = `${q.id}-${idx}`;
+          const checked = saved !== undefined && Number(saved) === opt.value ? "checked" : "";
+          html += `
+            <label class="radio-option" for="${id}">
+              <input
+                type="radio"
+                id="${id}"
+                name="${q.id}"
+                value="${opt.value}"
+                ${checked}
+              />
+              <div>
+                <div class="radio-text-main">${opt.main}</div>
+                ${opt.sub ? `<div class="radio-text-sub">${opt.sub}</div>` : ""}
+              </div>
+            </label>
+          `;
+        });
+        html += `</div></div>`;
+      }
+
+      questionBody.innerHTML = html;
+
+      if (backBtn) {
+        backBtn.disabled = currentIndex === 0;
+        backBtn.style.opacity = currentIndex === 0 ? 0.5 : 1;
+      }
+      if (nextBtn) {
+        nextBtn.textContent =
+          currentIndex === questions.length - 1 ? "See my BlinkCheck score" : "Next";
+      }
+    }
+
+    function getCurrentAnswer() {
+      const q = questions[currentIndex];
+      if (!q) return null;
+
+      if (q.type === "slider") {
+        const input = document.getElementById(q.id + "-input");
+        if (!input) return null;
+        return input.value;
+      } else if (q.type === "radio") {
+        const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+        if (!checked) return null;
+        return checked.value;
+      }
+      return null;
+    }
+
+    function handleNext() {
+      const val = getCurrentAnswer();
+      if (val === null) {
+        questionError && questionError.classList.remove("hidden");
+        return;
+      }
+      questionError && questionError.classList.add("hidden");
+      answers[questions[currentIndex].id] = Number(val);
+
+      if (currentIndex === questions.length - 1) {
+        computeResult();
+        showResultScreen();
+      } else {
+        currentIndex++;
+        renderQuestion();
+      }
+    }
+
+    function handleBack() {
+      if (currentIndex === 0) return;
+      currentIndex--;
+      renderQuestion();
+    }
+
+    function computeResult() {
+      let total = 0;
+      let maxTotal = 0;
+
+      questions.forEach((q) => {
+        const val = answers[q.id] ?? 0;
+        total += Number(val);
+
+        if (q.type === "slider") {
+          maxTotal += q.max;
+        } else if (q.type === "radio") {
+          const maxOpt = Math.max(...q.options.map((o) => o.value));
+          maxTotal += maxOpt;
+        }
+      });
+
+      const dryness = answers["dryness"] ?? 0;
+      const distortion = answers["distortion"] ?? 0;
+
+      const scorePercent = maxTotal > 0 ? Math.round((total / maxTotal) * 100) : 0;
+
+      let bucket = "green";
+      let label = "Green · Comfortable";
+      let heading = "Your eyes seem fairly comfortable today.";
+      let text =
+        "Nice! Based on your answers, your eye comfort looks good right now. Keep up your breaks, hydration, and blink habits.";
+
+      if (scorePercent >= 30 && scorePercent < 50) {
+        bucket = "yellow";
+        label = "Yellow · Mild strain";
+        heading = "Your eyes may be feeling mildly strained.";
+        text =
+          "Nothing alarming, but your eyes are doing some extra work. Small tweaks to breaks, brightness, and posture can help.";
+      } else if (scorePercent >= 50 && scorePercent < 70) {
+        bucket = "orange";
+        label = "Orange · Moderate strain";
+        heading = "Your eyes may be under moderate strain today.";
+        text =
+          "Your answers suggest your eyes are working quite hard. Try shorter screen blocks, better lighting, and regular breaks.";
+      } else if (scorePercent >= 70) {
+        bucket = "red";
+        label = "Red · Consider an eye exam if this continues";
+        heading = "Your eyes may be feeling significantly strained.";
+        text =
+          "If this level of discomfort keeps showing up on most days, it would be a good idea to talk to an eye care professional.";
+      }
+
+      if (dryness >= 3 || distortion >= 3) {
+        bucket = "red";
+        label = "Red · Consider an eye exam if this continues";
+        heading = "Some of your answers deserve extra attention.";
+        text =
+          "Persistent strong dryness, grittiness, redness, or clear distortion (wavy lines, dark patches) should be checked by an eye care professional—especially if new or worsening.";
+      }
+
+      if (resultTag) {
+        resultTag.classList.remove("green", "yellow", "orange", "red");
+        resultTag.classList.add(bucket);
+      }
+      if (resultLabel) resultLabel.textContent = label;
+      if (resultScore) {
+        resultScore.textContent =
+          "BlinkCheck score: " + total + " / " + maxTotal + " (" + scorePercent + "% strain indicators)";
+      }
+      if (resultHeading) resultHeading.textContent = heading;
+      if (resultText) resultText.textContent = text;
+
+      // Build score card / breakdown
+      if (resultBreakdownEl) {
+        let breakdownHtml = `<div class="result-breakdown-title">Today’s answers</div><ul class="result-breakdown-list">`;
+
+        questions.forEach((q) => {
+          const val = answers[q.id];
+          let answerLabel = "Not answered";
+
+          if (q.type === "slider") {
+            if (val !== undefined && q.labels[val]) {
+              answerLabel = q.labels[val];
+            }
+          } else if (q.type === "radio") {
+            const opt = q.options.find((o) => o.value === val);
+            if (opt) {
+              answerLabel = opt.main;
+            }
+          }
+
+          breakdownHtml += `
+            <li class="result-breakdown-item">
+              <span class="label">${q.title}</span> — ${answerLabel}
+            </li>
+          `;
+        });
+
+        breakdownHtml += `</ul>`;
+        resultBreakdownEl.innerHTML = breakdownHtml;
+      }
+    }
+
+    function handleRestart() {
+      Object.keys(answers).forEach((key) => delete answers[key]);
+      currentIndex = 0;
+      showQuestionScreen();
+    }
+
+    function handleShare() {
+      if (!resultScore || !resultLabel || !resultHeading) return;
+
+      const payload =
+        "My BlinkCheck result today:\n\n" +
+        resultLabel.textContent +
+        "\n" +
+        resultScore.textContent +
+        "\n" +
+        resultHeading.textContent +
+        "\n\nTry your own 1-minute eye comfort check with BlinkCheck.";
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(payload).then(
+          () => {
+            if (shareBtn) {
+              shareBtn.textContent = "Copied!";
+              setTimeout(() => (shareBtn.textContent = "Copy my result text"), 1500);
+            }
+          },
+          () => {
+            alert("Could not copy text automatically. You can copy it manually:\n\n" + payload);
+          }
+        );
+      } else {
+        alert("Copy this text:\n\n" + payload);
+      }
+    }
+
+    // Bonus mini-game toggle
+    toggleBonusBtn && toggleBonusBtn.addEventListener("click", () => {
+      if (!bonusContainer) return;
+      bonusVisible = !bonusVisible;
+      if (bonusVisible) {
+        bonusContainer.classList.remove("hidden");
+        toggleBonusBtn.textContent = "Hide bonus mini-games";
+      } else {
+        bonusContainer.classList.add("hidden");
+        toggleBonusBtn.textContent = "Show bonus mini-games";
+      }
+    });
+
+    // Attach event listeners safely
+    startBtn && startBtn.addEventListener("click", showQuestionScreen);
+    nextBtn && nextBtn.addEventListener("click", handleNext);
+    backBtn && backBtn.addEventListener("click", handleBack);
+    restartBtn && restartBtn.addEventListener("click", handleRestart);
+    shareBtn && shareBtn.addEventListener("click", handleShare);
+
+    // ---------- Contrast Spotter Mini-Game ----------
+    const contrastGridEl = document.getElementById("contrast-grid");
+    const contrastFeedbackEl = document.getElementById("contrast-feedback");
+    const contrastResetBtn = document.getElementById("contrast-reset-btn");
+
+    let contrastCorrectIndex = null;
+    let contrastLocked = false;
+
+    function initContrastGame() {
+      if (!contrastGridEl) return;
+
+      contrastGridEl.innerHTML = "";
+      contrastLocked = false;
+
+      // 4x4 grid (16 squares)
+      const base = 200;   // light grey
+      const darker = 180; // slightly darker, closer hue
+
+      contrastCorrectIndex = Math.floor(Math.random() * 16);
+
+      for (let i = 0; i < 16; i++) {
+        const square = document.createElement("div");
+        square.className = "contrast-square";
+
+        const val = i === contrastCorrectIndex ? darker : base;
+        square.style.backgroundColor = `rgb(${val}, ${val}, ${val})`;
+        square.dataset.index = i;
+
+        square.addEventListener("click", () => {
+          if (contrastLocked) return;
+          contrastLocked = true;
+          revealContrastAnswer(i);
+        });
+
+        contrastGridEl.appendChild(square);
+      }
+
+      if (contrastFeedbackEl) {
+        contrastFeedbackEl.textContent = "Tap a box to take a guess.";
+      }
+    }
+
+    function revealContrastAnswer(chosenIndex) {
+      if (!contrastGridEl || !contrastFeedbackEl) return;
+
+      const squares = contrastGridEl.querySelectorAll(".contrast-square");
+      squares.forEach((sq, i) => {
+        if (i === contrastCorrectIndex) {
+          sq.classList.add("correct", "revealed");
+        } else if (i === chosenIndex) {
+          sq.classList.add("wrong", "revealed");
+        }
+      });
+
+      if (chosenIndex === contrastCorrectIndex) {
+        contrastFeedbackEl.innerHTML =
+          "<strong>Nice catch!</strong> You spotted the slightly darker box. " +
+          "Remember: this is just a fun screen contrast game, not a vision test.";
+      } else {
+        contrastFeedbackEl.innerHTML =
+          "<strong>Good try!</strong> These greys are intentionally close. Screen settings also affect it, " +
+          "so treat this as a tiny awareness game, not a real eye check.";
+      }
+    }
+
+    contrastResetBtn && contrastResetBtn.addEventListener("click", initContrastGame);
+
+    // ---------- Lines Checker Mini-Game ----------
+    const linesButtons = document.querySelectorAll(".lines-option-btn");
+    const linesFeedbackEl = document.getElementById("lines-feedback");
+
+    if (linesButtons && linesButtons.length > 0) {
+      linesButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const value = btn.dataset.lines;
+          linesButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          if (!linesFeedbackEl) return;
+
+          if (value === "no") {
+            linesFeedbackEl.innerHTML =
+              "Good. If straight lines and text look normal in your day-to-day life, " +
+              "that’s reassuring — but still not a substitute for a real eye exam when needed.";
+          } else if (value === "maybe") {
+            linesFeedbackEl.innerHTML =
+              "If you’re not sure or you occasionally notice strange distortion, it’s worth " +
+              "paying attention. If it becomes clearer or more frequent, please book a check-up.";
+          } else if (value === "yes") {
+            linesFeedbackEl.innerHTML =
+              "<strong>Important:</strong> New or persistent distortion, wavy lines or a dark patch " +
+              "in your vision should be evaluated by an eye care professional as soon as you can. " +
+              "BlinkCheck and this grid are only educational and cannot diagnose anything.";
+          }
+        });
+      });
+    }
+
+    // ---------- Color Dot Guess Mini-Game ----------
+    const colorDotGridEl = document.getElementById("color-dot-grid");
+    const colorDotButtons = document.querySelectorAll(".color-dot-btn");
+    const colorDotFeedbackEl = document.getElementById("color-dot-feedback");
+    const colorDotResetBtn = document.getElementById("color-dot-reset-btn");
+
+    // Patterns for numbers 3, 5, 8 in 10x10 grid
+    const pattern3 = [
+      "0111100000",
+      "1000010000",
+      "0000010000",
+      "0001110000",
+      "0000010000",
+      "0000010000",
+      "1000010000",
+      "0111100000",
+      "0000000000",
+      "0000000000",
+    ];
+
+    const pattern5 = [
+      "1111110000",
+      "1000010000",
+      "1000000000",
+      "1111100000",
+      "0000110000",
+      "0000010000",
+      "1000010000",
+      "0111100000",
+      "0000000000",
+      "0000000000",
+    ];
+
+    const pattern8 = [
+      "0111100000",
+      "1000010000",
+      "1000010000",
+      "0111100000",
+      "1000010000",
+      "1000010000",
+      "1000010000",
+      "0111100000",
+      "0000000000",
+      "0000000000",
+    ];
+
+    const colorPatterns = [
+      { number: 3, pattern: pattern3 },
+      { number: 5, pattern: pattern5 },
+      { number: 8, pattern: pattern8 },
+    ];
+
+    let currentColorNumber = 5;
+    let currentColorPattern = pattern5;
+
+    function initColorDotGame() {
+      if (!colorDotGridEl) return;
+      colorDotGridEl.innerHTML = "";
+
+      // pick random pattern
+      const choice = colorPatterns[Math.floor(Math.random() * colorPatterns.length)];
+      currentColorNumber = choice.number;
+      currentColorPattern = choice.pattern;
+
+      const baseHue = 120;  // background: greenish
+      const numberHue = 15; // number: orangish, clearly different
+
+      for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+          const dot = document.createElement("div");
+          dot.className = "color-dot";
+
+          const isNumber =
+            row < currentColorPattern.length &&
+            currentColorPattern[row][col] === "1";
+
+          const hue = isNumber ? numberHue : baseHue;
+          const sat = isNumber ? 80 : 60;
+          const lightness = isNumber ? 55 : 70;
+
+          dot.style.backgroundColor = `hsl(${hue}, ${sat}%, ${lightness}%)`;
+          colorDotGridEl.appendChild(dot);
+        }
+      }
+
+      if (colorDotFeedbackEl) {
+        colorDotFeedbackEl.textContent =
+          "Just a fun visual game — your device and lighting can affect what you see.";
+      }
+
+      colorDotButtons.forEach((btn) => btn.classList.remove("active"));
+    }
+
+    if (colorDotButtons && colorDotButtons.length > 0) {
+      colorDotButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const choice = btn.dataset.num;
+          colorDotButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          if (!colorDotFeedbackEl) return;
+
+          if (choice === String(currentColorNumber)) {
+            colorDotFeedbackEl.innerHTML =
+              `<strong>Nice!</strong> You spotted the number ${currentColorNumber} in the dots. ` +
+              "Remember: this is only a playful color-dot puzzle and not a color vision test.";
+          } else if (choice === "no") {
+            colorDotFeedbackEl.innerHTML =
+              "Totally okay if you don't see a clear number. Screen type, brightness and lighting " +
+              "can all change how this puzzle looks — and this is <strong>not</strong> a diagnostic test.";
+          } else {
+            colorDotFeedbackEl.innerHTML =
+              `Fun guess! A stylised ${currentColorNumber} is hidden in the dots. ` +
+              "But again, this is just a game, not a clinical color vision assessment.";
+          }
+        });
+      });
+    }
+
+    colorDotResetBtn && colorDotResetBtn.addEventListener("click", initColorDotGame);
+
+    // Init games + start screen
+    initContrastGame();
+    initColorDotGame();
+    showStartScreen();
+  </script>
+</body>
+</html>
