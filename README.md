@@ -1,5 +1,5 @@
 # 👁️ BlinkCheck — 1-Minute Daily Eye Comfort Check + Mini-Games  
-**Live site:** https://pkilaru-labs.github.io/blinkcheck/  
+**Live site:** https://soster-labs.github.io/blinkcheck/  
 
 ![Visitors](https://visitor-badge.laobi.icu/badge?page_id=pkilaru-labs.blinkcheck)
 
